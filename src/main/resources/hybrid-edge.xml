@@ -1,25 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:c="http://camel.apache.org/schema/spring"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-<c:camelContext id="camel">
+    <context:property-placeholder location="classpath:application.properties"
+                                  ignore-resource-not-found="true"/>
 
-<!--
-This route uses the build-in Camel Timer component.
-It passes it through our custom TimerProcessor, which creates a message body from the Timer header.
-Then it sends it to a logger and to a Solace instance with the topic 'timerTopic.'
--->
+    <bean id="emsJndiTemplate" class="org.springframework.jndi.JndiTemplate">
+        <property name="environment">
+            <props>
+                <prop key="java.naming.factory.initial">com.tibco.tibjms.naming.TibjmsInitialContextFactory</prop>
+                <prop key="java.naming.provider.url">${ems.url}</prop>
+                <prop key="java.naming.security.principal">${ems.user}</prop>
+                <prop key="java.naming.security.credentials">${ems.password}</prop>
+            </props>
+        </property>
+    </bean>
+    <!-- Can't define one global destination resolver, otherwise all JMS components will use it -->
+    <!--bean id="emsDestinationResolver"
+          class="org.springframework.jms.support.destination.JndiDestinationResolver">
+        <property name="jndiTemplate">
+            <ref bean="emsJndiTemplate" />
+        </property>
+        <property name="cache">
+            <value>true</value>
+        </property>
+    </bean-->
 
-	<c:route>
-		<c:from uri="timer:timer"/>
-		<c:bean ref="timerProcessor"/>
-		<c:to uri="log:TIMER-SOLACE-LOGGER"/>
-		<c:to uri="solace-jms:topic:timerTopic"/>
-	</c:route>
+    <bean id="queueConnectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory">
+            <bean class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter">
+                <property name="targetConnectionFactory">
+                    <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                        <property name="jndiTemplate">
+                            <ref bean="emsJndiTemplate" />
+                        </property>
+                        <property name="jndiName"><value>FTQueueConnectionFactory</value>
+                        </property>
+                    </bean>
+                </property>
+                <property name="username" value="${ems.user}" />
+                <property name="password" value="${ems.password}" />
+            </bean>
+        </property>
+    </bean>
 
-</c:camelContext>
+    <!-- bean id="emsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+        <property name="connectionFactory" ref="queueConnectionFactory" />
+    </bean -->
+
+    <bean id="ems" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="configuration">
+            <bean  class="org.apache.camel.component.jms.JmsConfiguration">
+                <property name="connectionFactory" ref="queueConnectionFactory"/>
+                <property name="destinationResolver">
+                    <bean class="org.springframework.jms.support.destination.JndiDestinationResolver">
+                        <property name="jndiTemplate">
+                            <ref bean="emsJndiTemplate" />
+                        </property>
+                        <property name="cache">
+                            <value>true</value>
+                        </property>
+                    </bean>
+                </property>
+                <!-- property name="transactionManager" ref="emsTransactionManager" /-->
+                <!-- property name="transacted" value="true"/ -->
+                <property name="concurrentConsumers" value="1"/>
+            </bean>
+        </property>
+    </bean>
+
+    <c:camelContext id="camel">
+
+        <!--
+        This route uses the build-in Camel Timer component.
+        It passes it through our custom TimerProcessor, which creates a message body from the Timer header.
+        Then it sends it to a logger and to a Solace instance with the topic 'timerTopic.'
+        <c:transacted />
+        -->
+
+        <c:route>
+            <c:from uri="ems:queue:SOLACE_BRIDGE"/>
+            <c:to uri="solace-jms:topic:T/testTopic"/>
+        </c:route>
+
+    </c:camelContext>
 
 </beans>

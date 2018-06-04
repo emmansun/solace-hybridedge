@@ -4,11 +4,17 @@ plugins {
 
 repositories {
     mavenCentral()
+    //maven {
+    //    url "http://www.custom.com/artifactory/repo"
+    //}
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
 
-    // Spring actuator, log4j
+    // Spring actuator, log4j2
     compile("org.springframework.boot:spring-boot-starter-log4j2")
     compile("org.springframework.boot:spring-boot-actuator")
 
@@ -22,6 +28,13 @@ dependencies {
 
     // RabbitMQ dependencies
     compile("org.apache.camel:camel-rabbitmq:2.21.0")
+
+    // JMS Component dependencies
+    compile("org.apache.camel:camel-jms:2.21.0")
+
+    //TIBCO EMS dependencies
+    compile("com.tibco:tibjms:7.0.0")
+    compile("com.tibco.security:tibcrypt:*")
 
     // Testing
     testCompile("org.springframework.boot:spring-boot-starter-test")
