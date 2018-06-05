@@ -50,9 +50,9 @@
         </property>
     </bean>
 
-    <!-- bean id="emsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+    <bean id="emsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
         <property name="connectionFactory" ref="queueConnectionFactory" />
-    </bean -->
+    </bean>
 
     <bean id="ems" class="org.apache.camel.component.jms.JmsComponent">
         <property name="configuration">
@@ -68,8 +68,8 @@
                         </property>
                     </bean>
                 </property>
-                <!-- property name="transactionManager" ref="emsTransactionManager" /-->
-                <!-- property name="transacted" value="true"/ -->
+                <property name="transactionManager" ref="emsTransactionManager" />
+                <property name="transacted" value="true"/>
                 <property name="concurrentConsumers" value="1"/>
             </bean>
         </property>
@@ -81,11 +81,11 @@
         This route uses the build-in Camel Timer component.
         It passes it through our custom TimerProcessor, which creates a message body from the Timer header.
         Then it sends it to a logger and to a Solace instance with the topic 'timerTopic.'
-        <c:transacted />
         -->
 
         <c:route>
             <c:from uri="ems:queue:SOLACE_BRIDGE"/>
+            <c:transacted />
             <c:to uri="solace-jms:topic:T/testTopic"/>
         </c:route>
 
