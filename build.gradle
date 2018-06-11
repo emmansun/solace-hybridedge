@@ -16,18 +16,31 @@ dependencies {
 
     // Spring actuator, log4j2
     compile("org.springframework.boot:spring-boot-starter-log4j2")
+
+    //Spring web
+    compile("org.springframework.boot:spring-boot-starter-web"){
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile("org.springframework.boot:spring-boot-starter-jetty")
+    compile("org.eclipse.jetty:jetty-jaas")
+    compile("org.eclipse.jetty:jetty-http")
+
     compile("org.springframework.boot:spring-boot-actuator")
+    
+    //hawtio
+    compile("io.hawt:hawtio-springboot:1.5.10")
+    compile("io.hawt:hawtio-core:1.5.10")
 
     // Camel and Solace
     compile("org.apache.camel:camel-spring-boot-starter:2.21.0")
     compile("com.solace.camel.component:camel-solace-jms:1.0.0")
 
     // ActiveMQ dependencies
-    compile("org.apache.activemq:activemq-core:5.7.0")
-    compile("org.apache.activemq:activemq-camel:5.7.0")
+    // compile("org.apache.activemq:activemq-core:5.7.0")
+    // compile("org.apache.activemq:activemq-camel:5.7.0")
 
     // RabbitMQ dependencies
-    compile("org.apache.camel:camel-rabbitmq:2.21.0")
+    // compile("org.apache.camel:camel-rabbitmq:2.21.0")
 
     // JMS Component dependencies
     compile("org.apache.camel:camel-jms:2.21.0")

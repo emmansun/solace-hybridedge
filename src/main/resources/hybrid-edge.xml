@@ -48,6 +48,7 @@
                 <property name="password" value="${ems.password}" />
             </bean>
         </property>
+        <property name="sessionCacheSize" value="10" />
     </bean>
 
     <bean id="emsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
@@ -70,6 +71,7 @@
                 </property>
                 <property name="transactionManager" ref="emsTransactionManager" />
                 <property name="transacted" value="true"/>
+                <property name="consumerType" value="Simple"/>
                 <property name="concurrentConsumers" value="1"/>
             </bean>
         </property>

@@ -9,13 +9,16 @@
     <Root level="warn">
       <AppenderRef ref="Console"/>
     </Root>
-    <Logger name="com.solace" level="info" additivity="false">
+    <Logger name="com.solace" level="debug" additivity="false">
       <AppenderRef ref="Console"/>
     </Logger>
     <Logger name="org.springframework" level="info" additivity="false">
       <AppenderRef ref="Console"/>
     </Logger>
     <Logger name="org.apache.camel" level="info" additivity="false">
+      <AppenderRef ref="Console"/>
+    </Logger>
+    <Logger name="io.hawt" level="info" additivity="false">
       <AppenderRef ref="Console"/>
     </Logger>
   </Loggers>
