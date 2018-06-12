@@ -251,6 +251,10 @@ Please refer
 
 - [hawtio spring boot sampe](https://github.com/hawtio/hawtio/tree/2.x/examples/springboot)
 - [SpringBootCamelStarter](https://github.com/gpimblott/SpringBootCamelStarter)
+- [How to disable hawt.io authentication?
+](https://stackoverflow.com/questions/50734045/how-to-disable-hawt-io-authentication/50790144#50790144)
+
+This project integrated **Spring Boot**, **Camel**, **Hawtio** all in one JVM, another option is to deploy one standalone **Hawtio** instance and to monitor remote instances via [jolokia agent(JMX-HTTP bridge)](https://jolokia.org/index.html)
 
 ![Hawtio Dashboard](https://github.com/emmansun/solace-hybridedge/blob/master/hawtio_int.png)
 ![Hawtio Route Diagram](https://github.com/emmansun/solace-hybridedge/blob/master/hawtio_route.png)
