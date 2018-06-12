@@ -245,4 +245,6 @@ Change the brokerURL property value in the bean definition as appropriate. Add a
 
 Configuration instructions are here: http://camel.apache.org/activemq.html
 
+### Hawtio Dashboard
+![Hawtio Dashboard](https://github.com/emmansun/solace-hybridedge/blob/master/hawtio_int.png)
 
